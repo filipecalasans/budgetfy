@@ -12,11 +12,22 @@ def get_user(id):
 	return session.query(User).filter_by(id=int(id)).first()
 
 
-def get_user_by_name(username):
+def get_user_by_username(username):
 	session = DBSession()
 	return session.query(User).filter_by(
 		username=username).first()
 
+
+def get_user_by_email(email):
+	session = DBSession()
+	return session.query(User).filter_by(
+		email=email).first()
+
+def add_new_user(**kwargs):
+	'''
+		kwargs must match the User Schema.
+	'''
+	return True
 
 def get_expanses():
 	pass

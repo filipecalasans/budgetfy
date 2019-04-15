@@ -1,7 +1,7 @@
 import services
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import current_user, login_user, LoginManager, login_required
-from forms import LoginForm
+from forms import LoginForm, RegistrationForm
 
 import services
 import secret 
@@ -39,13 +39,27 @@ def login():
 	
 	form = LoginForm()
 	if form.validate_on_submit():
-		user = services.get_user_by_name(form.username.data)
+		user = services.get_user_by_username(form.username.data)
 		if user is None or not user.check_password(form.password.data):
-			# flash('Invalid username or password')
+			flash('Invalid username or password')
 			return redirect(url_for('login'))
 		login_user(user, remember=form.remember_me.data)
 		return redirect(url_for('index'))
 	return render_template('login.html', title='Sign In', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+	if current_user.is_authenticated:
+		return redirect(url_for('index'))
+	
+	form = RegistrationForm()
+	if form.validate_on_submit():
+		if not services.add_new_user():
+			flash('Error during registration, try again later!')
+			return redirect(url_for('register'))
+		return redirect(url_for('login'))
+	return render_template('register.html', title='Registration', form=form)
 
 
 @app.route('/logout')

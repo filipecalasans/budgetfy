@@ -15,7 +15,7 @@ class User(UserMixin, Base):
 	__tablename__ = 'user'
 	
 	username = Column(String(80), nullable=False)
-	name = Column(String(80), nullable = False)
+	firstname = Column(String(80), nullable = False)
 	lastname = Column(String(80), nullable = False)
 	email = Column(String(80), nullable = False)
 	id = Column(Integer, primary_key = True)
