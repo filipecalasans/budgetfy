@@ -11,14 +11,14 @@
 <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
 <p id="profile-name" class="profile-name-card"></p>
 <form class="form-signin" method="POST">
+
     {{ form.csrf_token }}
+
     <span id="reauth-email" class="reauth-email"></span>
-    {{form.username(id="inputEmail", placeholder="Username", class="form-control")}}
+
+    {{form.username(id="inputUsername", placeholder="Username", class="form-control")}}
     {{form.password(id="inputPassword", placeholder="Password", class="form-control")}}
 
-    <!-- <input type="username" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-    -->
     <div id="remember" class="checkbox">
         <label>
             <input type="checkbox" value="remember-me"> Remember me

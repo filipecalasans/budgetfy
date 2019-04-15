@@ -4,6 +4,7 @@ from flask_login import current_user, login_user, LoginManager, login_required
 from forms import LoginForm
 
 import services
+import secret 
 
 import os
 import ptvsd
@@ -14,7 +15,7 @@ ptvsd.enable_attach(redirect_output=True)
 app = Flask(__name__)
 
 # Set the secret key to some random bytes. Keep this really secret!
-app.secret_key = b'asdhkhjakj1912&@#{?8912qonvxm,cvcn!&@!@#%@#!'
+app.secret_key = secret.FLASK_SECRET
 
 login_manager = LoginManager()
 login_manager.init_app(app)
