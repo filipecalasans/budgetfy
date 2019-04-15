@@ -6,13 +6,14 @@ engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-session = DBSession()
 
 def get_user(id):
+	session = DBSession()
 	return session.query(User).filter_by(id=int(id)).first()
 
 
 def get_user_by_name(username):
+	session = DBSession()
 	return session.query(User).filter_by(
 		username=username).first()
 

@@ -1,5 +1,5 @@
 import services
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from flask_login import current_user, login_user, LoginManager, login_required
 from forms import LoginForm
 
@@ -10,9 +10,6 @@ import ptvsd
 import socket
 
 ptvsd.enable_attach(redirect_output=True)
-ptvsd.wait_for_attach()
-
-ptvsd.break_into_debugger()
 
 app = Flask(__name__)
 
@@ -41,9 +38,9 @@ def login():
 	
 	form = LoginForm()
 	if form.validate_on_submit():
-		user = services.get_user_by_name(form.username.data).first()
+		user = services.get_user_by_name(form.username.data)
 		if user is None or not user.check_password(form.password.data):
-			flash('Invalid username or password')
+			# flash('Invalid username or password')
 			return redirect(url_for('login'))
 		login_user(user, remember=form.remember_me.data)
 		return redirect(url_for('index'))
@@ -57,4 +54,4 @@ def logout():
 
 if __name__ == '__main__':
 	app.debug = True
-	app.run(host='0.0.0.0', port=5000)
+	app.run(use_reloader=False, host='0.0.0.0', port=5000)

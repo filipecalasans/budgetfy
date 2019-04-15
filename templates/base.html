@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -14,13 +14,14 @@
     {% block head %}
     <title>{% block title %}{% endblock %} - Budgetfy</title>
     {% endblock %}
-  </head>
-  <body>
 
-  <div class="container-fluid">
+</head>
+<body>
+
+  <div class="container">
     
-    <div id="content">{% block content %}{% endblock %}</div>
-  
-  </div>
-  </body>
+    {% block content %}{% endblock %}
+    
+</div>
+</body>
 </html>
