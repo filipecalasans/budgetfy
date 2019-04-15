@@ -1,7 +1,18 @@
 import services
 from flask import Flask, render_template
-from flask_login import current_user, login_user, LoginManager
+from flask_login import current_user, login_user, LoginManager, login_required
+from forms import LoginForm
+
 import services
+
+import os
+import ptvsd
+import socket
+
+ptvsd.enable_attach(redirect_output=True)
+ptvsd.wait_for_attach()
+
+ptvsd.break_into_debugger()
 
 app = Flask(__name__)
 
@@ -18,6 +29,8 @@ def load_user(user_id):
     return services.get_user(user_id)
 
 @app.route('/')
+@app.route('/index')
+@login_required
 def index():
 	return "Home page budget control"
 

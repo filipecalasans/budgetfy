@@ -13,8 +13,8 @@ def get_user(id):
 
 
 def get_user_by_name(username):
-	return sessin.query(User).filter_by(
-		username=name).first()
+	return session.query(User).filter_by(
+		username=username).first()
 
 
 def get_expanses():
