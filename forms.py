@@ -8,6 +8,7 @@ class LoginForm(FlaskForm):
     
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
 
 class RegistrationForm(FlaskForm):
 
@@ -18,7 +19,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-
+    
     def validate_username(self, username):
         user = services.get_user_by_username(username.data)
         if user is not None:

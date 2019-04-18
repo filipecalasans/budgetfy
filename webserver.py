@@ -1,6 +1,6 @@
 import services
 from flask import Flask, render_template, redirect, url_for, flash
-from flask_login import current_user, login_user, LoginManager, login_required
+from flask_login import current_user, login_user, LoginManager, login_required, logout_user
 from forms import LoginForm, RegistrationForm
 
 import services
@@ -28,9 +28,12 @@ def load_user(user_id):
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
-	return "Home page budget control"
+	# This should redirect to the landing page
+	if current_user.is_authenticated:
+		return 'User is Authenticated'
+	return redirect(url_for('login'))
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -48,6 +51,13 @@ def login():
 	return render_template('login.html', title='Sign In', form=form)
 
 
+@app.route('/logout')
+@login_required
+def logout():
+	logout_user()
+	return redirect(url_for('index'))
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 	if current_user.is_authenticated:
@@ -55,17 +65,18 @@ def register():
 	
 	form = RegistrationForm()
 	if form.validate_on_submit():
-		if not services.add_new_user():
+		new_user = services.add_new_user(
+			username=form.username.data,
+			firstname=form.firstname.data,
+			lastname=form.lastname.data,
+			email=form.email.data,
+			password=form.password.data)
+		if new_user is None:
 			flash('Error during registration, try again later!')
 			return redirect(url_for('register'))
 		return redirect(url_for('login'))
 	return render_template('register.html', title='Registration', form=form)
 
-
-@app.route('/logout')
-def logout():
-	logout_user()
-	return redirect(url_for('index'))
 
 if __name__ == '__main__':
 	app.debug = True
