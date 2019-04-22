@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy import Float, Text 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -28,17 +28,6 @@ class User(UserMixin, Base):
 		return check_password_hash(self.password_hash, password)
 
 
-class Expense(Base):
-	
-	__tablename__ = 'expense'
-
-	id = Column(Integer, primary_key = True)
-	name = Column(String(80), nullable = False)
-	value = Column(Float(precision=2), nullable = False)
-	created_time = Column(DateTime, default=datetime.datetime.utcnow)
-	category_id = Column(Integer, ForeignKey('category.id'))
-	location = Column(Integer, ForeignKey('location.id'))
-	
 class Category(Base):
 	
 	__tablename__	= 'category'
@@ -55,6 +44,31 @@ class Location(Base):
 
 	id = Column(Integer, primary_key = True)
 	name = Column(String(80), nullable = False)	
+
+
+class Expense(Base):
+	
+	__tablename__ = 'expense'
+
+	id = Column(Integer, primary_key = True)
+	name = Column(String(80), nullable = False)
+	value = Column(Float(precision=2), nullable = False)
+	created_time = Column(DateTime, default=datetime.datetime.utcnow)
+	category_id = Column(Integer, ForeignKey('category.id'))
+	location_id = Column(Integer, ForeignKey('location.id'))
+	user_id = Column(Integer, ForeignKey('user.id'))
+
+	user = relationship(User,
+		backref=backref('expenses',
+		uselist=True))
+
+	location = relationship(Location,
+		backref=backref('expenses',
+		uselist=True))
+
+	category = relationship(Category,
+		backref=backref('expenses',
+		uselist=True))
 
 
 engine = create_engine(
