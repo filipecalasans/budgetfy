@@ -10,7 +10,12 @@ import os
 import ptvsd
 import socket
 
-ptvsd.enable_attach(redirect_output=True)
+import logging
+
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
+# ptvsd.enable_attach(redirect_output=True)
 
 app = Flask(__name__)
 
@@ -26,13 +31,15 @@ login_manager.login_view = "login"
 def load_user(user_id):
     return services.get_user(user_id)
 
-@app.route('/')
 @app.route('/index')
+def landing_page():
+	return 'Landing Page'
+
+@app.route('/')
 def index():
-	# This should redirect to the landing page
 	if current_user.is_authenticated:
-		return 'User is Authenticated'
-	return redirect(url_for('login'))
+		return redirect(url_for('user_expenses'))
+	return redirect(url_for('landing_page'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -76,6 +83,14 @@ def register():
 			return redirect(url_for('register'))
 		return redirect(url_for('login'))
 	return render_template('register.html', title='Registration', form=form)
+
+
+@app.route('/expenses')
+@login_required
+def user_expenses():
+	expenses = services.get_expenses_by_user(
+		current_user.id)
+	return render_template('expenses.html', expenses=expenses)
 
 
 if __name__ == '__main__':

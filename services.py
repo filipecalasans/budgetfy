@@ -1,6 +1,6 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
-from catalogdb import Base, Category, Expense, User, Category
+from catalogdb import Base, Category, Expense, User, Category, Location
 
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
@@ -43,11 +43,17 @@ def add_new_user(**kwargs):
 		return None
 	return new_user
 
-def get_expanses():
-	pass
-
+def get_expenses_by_user(user_id):
+	'''
+		Return user's expenses sorted by date
+	'''
+	session= DBSession()
+	expenses = session.query(Expense, Category, Location).\
+		join(Category).\
+		join(Location).\
+		filter(Expense.user_id==user_id).\
+		order_by(desc(Expense.created_time)).all()
+	return expenses
 
 def get_categories(user_id):
 	pass
-
-

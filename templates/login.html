@@ -20,14 +20,7 @@
     {{form.username(id="inputUsername", placeholder="Username", class="form-control")}}
     {{form.password(id="inputPassword", placeholder="Password", class="form-control")}}
 
-    <!-- <div id="remember" class="checkbox">
-        <label>
-            <input type="checkbox" value="remember-me"> Remember me
-        </label>
-    </div> -->
-
     <div class="form-check" id="remember">
-        <!-- <input class="form-check-input" type="checkbox" value="" id="defaultCheck1"> -->
         {{form.remember_me(class="form-check-input", type="checkbox", value="", id="defaultCheck1")}}
         <label class="form-check-label" for="defaultCheck1">
             {{form.remember_me.label}}

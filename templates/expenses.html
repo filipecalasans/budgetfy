@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+  {{ super() }}
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/expenses.css') }}">
+{% endblock %}
+{% block content %}
+
+<div class="card card-container">
+
+{% for e in expenses %}
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{e.Expense.name}}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">{{e.Category.Description}}
+      {%if e.Category.Description %}: {{e.Category.Description}} {%endif%}</h6>
+    <h5 class="card-expense-value">$: {{e.Expense.value}}</h5>
+    <p class="card-text"></p>
+    <a href="#" class="card-link">Card link</a>1
+    <a href="#" class="card-link">Another link</a>
+  </div>
+</div>
+{% endfor %}
+</div><!-- /card-container -->
+
+{% endblock %}
