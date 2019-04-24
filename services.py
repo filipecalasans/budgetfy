@@ -55,5 +55,18 @@ def get_expenses_by_user(user_id):
 		order_by(desc(Expense.created_time)).all()
 	return expenses
 
+
+def get_expense_by_id(id):
+	'''
+		Return user's expense sorted by date
+	'''
+	session= DBSession()
+	expense = session.query(Expense, Category, Location).\
+		join(Category).\
+		join(Location).\
+		filter(Expense.id==id).first()
+	return expense
+
+
 def get_categories(user_id):
 	pass

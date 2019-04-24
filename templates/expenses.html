@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Expenses{% endblock %}
 {% block head %}
   {{ super() }}
   
@@ -7,21 +7,40 @@
 {% endblock %}
 {% block content %}
 
-<div class="card card-container">
+{% macro sentence_case(text) %}
+    {{ text[0]|upper}}{{text[1:] }}
+{% endmacro %}
 
-{% for e in expenses %}
-<div class="card" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">{{e.Expense.name}}</h5>
-    <h6 class="card-subtitle mb-2 text-muted">{{e.Category.Description}}
-      {%if e.Category.Description %}: {{e.Category.Description}} {%endif%}</h6>
-    <h5 class="card-expense-value">$: {{e.Expense.value}}</h5>
-    <p class="card-text"></p>
-    <a href="#" class="card-link">Card link</a>1
-    <a href="#" class="card-link">Another link</a>
-  </div>
-</div>
-{% endfor %}
+
+
+<div class="card card-container">
+  {% for e in expenses %}
+
+  <div class="card">
+      <a href="{{url_for('expense_detail', id=e.Expense.id)}}">
+        <h5 class="card-header">{{sentence_case(e.Expense.name)}}</h5>
+        <span class="badge badge-primary badge-pill">$:{{e.Expense.value}}</span>
+      </a>
+      <div class="card-body">
+        <h5 class="card-title card-expense-value">$:{{e.Expense.value}}</h5>
+        <p class="card-text">{{sentence_case(e.Category.name)}}</p>
+        <p>{{e.Expense.created_time.strftime('%m/%d/%Y')}}</p>
+        <!-- <a href="#" class="btn btn-primary">Details</a> -->
+      </div>
+    </div>
+
+
+  <!-- <div class="card" style="width: 36rem;">
+    <div class="card-body">
+      <h5 class="card-title">{{sentence_case(e.Expense.name)}}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">
+        {{sentence_case(e.Category.name)}}
+      </h6>
+      <h5 class="card-expense-value">$: {{e.Expense.value}}</h5>
+      <p class="card-text">Location: {{e.Location.name}}</p>
+    </div>
+  </div> -->
+  {% endfor %}
 </div><!-- /card-container -->
 
 {% endblock %}

@@ -93,6 +93,17 @@ def user_expenses():
 	return render_template('expenses.html', expenses=expenses)
 
 
+@app.route('/expenses/<int:id>')
+@login_required
+def expense_detail(id):
+	expense = services.get_expense_by_id(id)
+	return 'Expense Id {}'.format(id)
+
+@app.route('/profile')
+@login_required
+def profile():
+	return 'User: Id {}'.format(current_user.username)
+
 if __name__ == '__main__':
 	app.debug = True
 	app.run(use_reloader=False, host='0.0.0.0', port=5000)
