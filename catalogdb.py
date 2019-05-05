@@ -14,10 +14,10 @@ class User(UserMixin, Base):
 	
 	__tablename__ = 'user'
 	
-	username = Column(String(80), nullable=False)
+	username = Column(String(80), nullable=False, unique=True)
 	firstname = Column(String(80), nullable = False)
 	lastname = Column(String(80), nullable = False)
-	email = Column(String(80), nullable = False)
+	email = Column(String(80), nullable = False, unique=True)
 	id = Column(Integer, primary_key = True)
 	password_hash = Column(String, nullable = False)
 	
@@ -43,7 +43,7 @@ class Location(Base):
 	__tablename__ = 'location'
 
 	id = Column(Integer, primary_key = True)
-	name = Column(String(80), nullable = False)	
+	name = Column(String(80), nullable = False, unique=True)	
 
 
 class Expense(Base):
@@ -55,16 +55,16 @@ class Expense(Base):
 	value = Column(Float(precision=2), nullable = False)
 	created_time = Column(DateTime, default=datetime.datetime.utcnow)
 	category_id = Column(Integer, ForeignKey('category.id'))
-	location_id = Column(Integer, ForeignKey('location.id'))
+	# location_id = Column(Integer, ForeignKey('location.id'), nullable=True)
 	user_id = Column(Integer, ForeignKey('user.id'))
 
 	user = relationship(User,
 		backref=backref('expenses',
 		uselist=True))
 
-	location = relationship(Location,
-		backref=backref('expenses',
-		uselist=True))
+	# location = relationship(Location,
+	# 	backref=backref('expenses',
+	# 	uselist=True))
 
 	category = relationship(Category,
 		backref=backref('expenses',

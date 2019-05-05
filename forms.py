@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
+from wtforms.validators import NumberRange
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 import services
 
@@ -29,3 +31,15 @@ class RegistrationForm(FlaskForm):
         user = services.get_user_by_email(email.data)
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
+class ExpenseForm(FlaskForm):
+
+    name = StringField('Expense', validators=[DataRequired()])
+    value = StringField('Amount $:', validators=[
+        DataRequired(), NumberRange(min=0)])
+    category = QuerySelectField(
+        'Category',
+        allow_blank=False,
+        get_label='name',
+        get_pk=lambda x: x.id
+    )

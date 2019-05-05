@@ -1,7 +1,7 @@
 import services
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import current_user, login_user, LoginManager, login_required, logout_user
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, ExpenseForm
 
 import services
 import secret 
@@ -15,7 +15,7 @@ import logging
 logging.basicConfig()
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
-# ptvsd.enable_attach(redirect_output=True)
+ptvsd.enable_attach(redirect_output=True)
 
 app = Flask(__name__)
 
@@ -85,12 +85,29 @@ def register():
 	return render_template('register.html', title='Registration', form=form)
 
 
-@app.route('/expenses')
+@app.route('/expenses', methods=['GET', 'POST'])
 @login_required
 def user_expenses():
+	form = ExpenseForm()
+	category_query = services.get_categories_query(
+		current_user.id) 
+	form.category.query = category_query
+	
+	if form.validate_on_submit():
+		# TODO: Insert expense here
+		services.add_expense(
+			name=form.name.data,
+			value=form.value.data,
+			category=form.category.data,
+			user=current_user
+		)
+	
 	expenses = services.get_expenses_by_user(
 		current_user.id)
-	return render_template('expenses.html', expenses=expenses)
+
+	return render_template(
+		'expenses.html', 
+		expenses=expenses, form=form)
 
 
 @app.route('/expenses/<int:id>')

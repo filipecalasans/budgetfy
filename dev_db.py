@@ -221,7 +221,7 @@ def insert_expenses():
                 name=exp['name'],
                 value=exp['value'],
                 category_id=exp['category_id'],
-                location_id=exp['location_id'],
+                # location_id=exp['location_id'],
                 user_id=exp['user_id'])
             session.add(e)
             session.commit()

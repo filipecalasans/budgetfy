@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, desc
+from sqlalchemy import create_engine, desc, or_
 from sqlalchemy.orm import sessionmaker
 from catalogdb import Base, Category, Expense, User, Category, Location
 
@@ -68,5 +68,28 @@ def get_expense_by_id(id):
 	return expense
 
 
-def get_categories(user_id):
-	pass
+def get_categories_query(user_id):
+	'''
+		Return the category query applicable to
+		a given user.
+	'''
+	session=DBSession()
+	return session.query(Category).filter(
+		or_(Category.user_id==user_id,
+		Category.user_id==None)
+	).order_by(Category.name)
+
+
+def add_expense(**kwargs):
+	category = Category(kwargs['category'])
+	user = User(kwargs['user'])
+	expense = Expense(
+		name=kwargs['name'],
+		value=kwargs['value'],
+		category=category,
+		user=user)
+	
+	
+
+
+
