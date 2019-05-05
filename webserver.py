@@ -15,7 +15,7 @@ import logging
 logging.basicConfig()
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
-ptvsd.enable_attach(redirect_output=True)
+# ptvsd.enable_attach(redirect_output=True)
 
 app = Flask(__name__)
 

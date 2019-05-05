@@ -1,11 +1,12 @@
 from sqlalchemy import create_engine, desc, or_
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from catalogdb import Base, Category, Expense, User, Category, Location
 
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
-DBSession = sessionmaker(bind=engine)
+DBSession = scoped_session(sessionmaker(bind=engine))
+
 
 def get_user(id):
 	session = DBSession()
@@ -48,9 +49,8 @@ def get_expenses_by_user(user_id):
 		Return user's expenses sorted by date
 	'''
 	session= DBSession()
-	expenses = session.query(Expense, Category, Location).\
+	expenses = session.query(Expense, Category).\
 		join(Category).\
-		join(Location).\
 		filter(Expense.user_id==user_id).\
 		order_by(desc(Expense.created_time)).all()
 	return expenses
@@ -81,14 +81,23 @@ def get_categories_query(user_id):
 
 
 def add_expense(**kwargs):
-	category = Category(kwargs['category'])
-	user = User(kwargs['user'])
+	session = DBSession()
+	category = kwargs['category']
+	user = kwargs['user']
 	expense = Expense(
 		name=kwargs['name'],
-		value=kwargs['value'],
-		category=category,
-		user=user)
+		value=kwargs['value'])
+	expense.user = user
+	expense.category = category
 	
+	session.add(expense)
+	try:
+		session.commit()
+	except Exception as e:
+		# Log Exception here
+		session.rollback()
+		return None
+	return expense
 	
 
 
