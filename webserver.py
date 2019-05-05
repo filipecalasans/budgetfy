@@ -37,7 +37,7 @@ def load_user(user_id):
 
 @app.route('/index')
 def landing_page():
-	return 'Landing Page'
+	return redirect(url_for('login'))
 
 @app.route('/')
 def index():

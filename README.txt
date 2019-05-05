@@ -4,6 +4,9 @@ Budgetfy isa web app that enables users to keep track of their expenses.
 It allows users to add/edit and categorize their expenses, also users can
 create custom categories and assign to each expense.
 
+We intend in the future to implement expenses report, and budget control tools 
+to help users to save money.
+
 ## How to Run
 
 You can run the project executing the following command in the terminal:
@@ -12,7 +15,7 @@ You can run the project executing the following command in the terminal:
 $> python webserver.py
 ```
 
-You can then access the web app in the address; **http://localhost:5000**
+You can then access the web app in the address; **http://localhost:5000/**
 
 ## Development database
 
