@@ -27,6 +27,10 @@ login_manager.init_app(app)
 
 login_manager.login_view = "login"
 
+@app.teardown_request
+def remove_session(ex=None):
+	services.remove_session()
+
 @login_manager.user_loader
 def load_user(user_id):
     return services.get_user(user_id)
@@ -139,10 +143,10 @@ def expense_detail(id):
 		'expenses_detail.html', form=form)
 
 
-@app.route('/profile')
-@login_required
-def profile():
-	return 'User: Id {}'.format(current_user.username)
+# @app.route('/profile')
+# @login_required
+# def profile():
+# 	return 'User: Id {}'.format(current_user.username)
 
 
 @app.route('/category', methods=['GET','POST'])

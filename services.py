@@ -7,11 +7,12 @@ Base.metadata.bind = engine
 
 DBSession = scoped_session(sessionmaker(bind=engine))
 
-
+def remove_session():
+	DBSession.remove()
+	
 def get_user(id):
 	session = DBSession()
 	return session.query(User).filter_by(id=int(id)).first()
-
 
 def get_user_by_username(username):
 	session = DBSession()
@@ -59,14 +60,16 @@ def get_expenses_by_user(user_id):
 
 def update_expense(**kwargs):
 	session = DBSession()
-	expense = session.query(Expense).\
+	session.query(Expense).\
 		filter_by(id=kwargs['id']).update(
 			{
-				'name': kwargs['name'],
-				'value': kwargs['value'],
-				'category_id': kwargs['category'].id
+				Expense.name: kwargs['name'],
+				Expense.value: kwargs['value'],
+				Expense.category_id: kwargs['category'].id
 			}
-		)	
+		)
+	session.commit()
+	
 
 
 def get_expense_by_id(id):
