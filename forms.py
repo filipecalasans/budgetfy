@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, FloatField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from wtforms.validators import NumberRange
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
@@ -35,7 +35,7 @@ class RegistrationForm(FlaskForm):
 class ExpenseForm(FlaskForm):
 
     name = StringField('Expense', validators=[DataRequired()])
-    value = StringField('Amount $:', validators=[
+    value = FloatField('Amount $:', validators=[
         DataRequired(), NumberRange(min=0)])
     category = QuerySelectField(
         'Category',
@@ -43,3 +43,8 @@ class ExpenseForm(FlaskForm):
         get_label='name',
         get_pk=lambda x: x.id
     )
+
+class CategoryForm(FlaskForm):
+
+    name = StringField('Category', validators=[DataRequired()])
+    description = StringField('Description')

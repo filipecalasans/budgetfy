@@ -1,7 +1,7 @@
 import services
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_user, LoginManager, login_required, logout_user
-from forms import LoginForm, RegistrationForm, ExpenseForm
+from forms import LoginForm, RegistrationForm, ExpenseForm, CategoryForm
 
 import services
 import secret 
@@ -90,9 +90,9 @@ def register():
 def user_expenses():
 	form = ExpenseForm()
 	category_query = services.get_categories_query(
-		current_user.id) 
+		current_user.id)
 	form.category.query = category_query
-	
+
 	if form.validate_on_submit():
 		# TODO: Insert expense here
 		services.add_expense(
@@ -101,7 +101,8 @@ def user_expenses():
 			category=form.category.data,
 			user=current_user
 		)
-	
+		return redirect(url_for('register'))
+		
 	expenses = services.get_expenses_by_user(
 		current_user.id)
 
@@ -110,16 +111,55 @@ def user_expenses():
 		expenses=expenses, form=form)
 
 
-@app.route('/expenses/<int:id>')
+@app.route('/expenses/<int:id>', methods=['GET', 'POST'])
 @login_required
 def expense_detail(id):
-	expense = services.get_expense_by_id(id)
-	return 'Expense Id {}'.format(id)
+	
+	form = ExpenseForm()
+	category_query = services.get_categories_query(
+			current_user.id)
+	form.category.query = category_query
+	
+	if request.method == 'GET':
+		expense = services.get_expense_by_id(id)	
+		form.name.data = expense.Expense.name
+		form.value.data = expense.Expense.value
+		form.category.data = expense.Category
+
+	if form.validate_on_submit():
+		services.update_expense(
+			id=id,
+			name=form.name.data,
+			value=form.value.data,
+			category=form.category.data
+		)
+		return redirect(url_for('user_expenses'))
+		
+	return render_template(
+		'expenses_detail.html', form=form)
+
 
 @app.route('/profile')
 @login_required
 def profile():
 	return 'User: Id {}'.format(current_user.username)
+
+
+@app.route('/category', methods=['GET','POST'])
+@login_required
+def category():
+	form = CategoryForm()
+	
+	if form.validate_on_submit():
+		services.add_category(
+			name = form.name.data,
+			description = form.description.data,
+			user = current_user
+		)
+		return  redirect(url_for('user_expenses'))
+
+	return render_template('category.html', form=form)
+
 
 if __name__ == '__main__':
 	app.debug = True

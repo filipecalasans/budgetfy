@@ -44,6 +44,7 @@ def add_new_user(**kwargs):
 		return None
 	return new_user
 
+
 def get_expenses_by_user(user_id):
 	'''
 		Return user's expenses sorted by date
@@ -56,14 +57,25 @@ def get_expenses_by_user(user_id):
 	return expenses
 
 
+def update_expense(**kwargs):
+	session = DBSession()
+	expense = session.query(Expense).\
+		filter_by(id=kwargs['id']).update(
+			{
+				'name': kwargs['name'],
+				'value': kwargs['value'],
+				'category_id': kwargs['category'].id
+			}
+		)	
+
+
 def get_expense_by_id(id):
 	'''
 		Return user's expense sorted by date
 	'''
 	session= DBSession()
-	expense = session.query(Expense, Category, Location).\
+	expense = session.query(Expense, Category).\
 		join(Category).\
-		join(Location).\
 		filter(Expense.id==id).first()
 	return expense
 
@@ -99,6 +111,18 @@ def add_expense(**kwargs):
 		return None
 	return expense
 	
+def add_category(**kwargs):
+	session = DBSession()
+	category = Category(
+		name=kwargs['name'],
+		description=kwargs['description']
+	)
+	category.user = kwargs['user'].id
 
-
-
+	session.add(category)
+	try:
+		session.commit()
+	except Exception as e:
+		session.roolbak()
+		return None
+	return category

@@ -43,28 +43,11 @@
 
   <div class="row">
       <div class="col-sm=10 col-md-2">
-          <button class="btn btn-lg btn-primary btn-block", type="submit">Add</button>
+          <button class="btn btn-lg btn-primary btn-block", type="submit">Update</button>
       </div>
     </div>
   
 </form><!-- /form -->
 </div>
-
-<div class="card card-container">
-  {% for e in expenses %}
-
-  <div class="card">
-      <a href="{{url_for('expense_detail', id=e.Expense.id)}}">
-        <h5 class="card-header">{{sentence_case(e.Expense.name)}}</h5>
-      </a>
-      <div class="card-body">
-        <h5 class="card-title card-expense-value">$:{{e.Expense.value}}</h5>
-        <p class="card-text">{{sentence_case(e.Category.name)}}</p>
-        <p>{{e.Expense.created_time.strftime('%m/%d/%Y')}}</p>
-        <!-- <a href="#" class="btn btn-primary">Details</a> -->
-      </div>
-    </div>
-  {% endfor %}
-</div><!-- /card-container -->
 
 {% endblock %}
