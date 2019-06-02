@@ -1,5 +1,4 @@
 import sys
-
-sys.path.insert(0, '/home/catalog')
+sys.path.append("/var/www/flaskapp/catalog")
 
 from webserver import app as application
