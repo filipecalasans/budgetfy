@@ -136,3 +136,13 @@
 .forgot-password:focus{
     color: rgb(12, 97, 33);
 }
+
+#facebookSignIn {
+    background-color:rgb(45, 56, 214);
+}
+
+#facebookSignIn:hover,
+#facebookSignIn:active,
+#facebookSignIn:focus {
+    background-color: rgb(96, 136, 247);
+}

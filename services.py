@@ -45,6 +45,35 @@ def add_new_user(**kwargs):
 		return None
 	return new_user
 
+def add_new_user_facebook(**kwargs):
+	fullname = kwargs['name']
+	names = fullname.split(' ')
+	first_name = None
+	last_name = None
+	if len(names) >= 1:
+		first_name = names[0]
+	if len(names) >= 2:
+		last_name = names[1]
+	facebook_id = kwargs['id']
+	
+	session = DBSession()
+	user = session.query(User).filter_by(facebook_id=facebook_id).first()
+	if user:
+		return user
+	
+	new_user = User(
+		firstname=first_name,
+		lastname=last_name, 
+		facebook_id=facebook_id)
+	
+	session.add(new_user)
+	try:
+		session.commit()
+	except Exception as e:
+		# Log Exception here
+		session.rollback()
+		return None
+	return new_user
 
 def get_expenses_by_user(user_id):
 	'''
@@ -69,8 +98,6 @@ def update_expense(**kwargs):
 			}
 		)
 	session.commit()
-	
-
 
 def get_expense_by_id(id):
 	'''
@@ -116,12 +143,19 @@ def add_expense(**kwargs):
 	
 def add_category(**kwargs):
 	session = DBSession()
+	category = session.query(Category).filter(
+		Category.user_id==kwargs['user'].id,
+		Category.name==kwargs['name'].lower()
+	)
+
+	if category:
+		return category
+	
 	category = Category(
-		name=kwargs['name'],
+		name=kwargs['name'].lower(),
 		description=kwargs['description']
 	)
 	category.user = kwargs['user'].id
-
 	session.add(category)
 	try:
 		session.commit()

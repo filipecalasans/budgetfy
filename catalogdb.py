@@ -16,13 +16,16 @@ class User(UserMixin, Base):
 	
 	__tablename__ = 'user'
 	
-	username = Column(String(80), nullable=False, unique=True)
+	username = Column(String(80), nullable=True, unique=True)
 	firstname = Column(String(80), nullable = False)
 	lastname = Column(String(80), nullable = False)
-	email = Column(String(80), nullable = False, unique=True)
+	email = Column(String(80), nullable = True, unique=True)
 	id = Column(Integer, primary_key = True)
-	password_hash = Column(String, nullable = False)
+	password_hash = Column(String, nullable = True)
 	
+	facebook_id = Column(String(512), nullable=True, unique=True)
+	facebook_pic_url = Column(String(512), nullable=True)
+
 	def set_password(self, password):
 		self.password_hash = generate_password_hash(password)
 
@@ -71,7 +74,6 @@ class Expense(Base):
 	category = relationship(Category,
 		backref=backref('expenses',
 		uselist=True))
-
 
 engine = create_engine(
 	'sqlite:///catalog.db')

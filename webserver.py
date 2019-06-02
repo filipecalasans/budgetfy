@@ -1,7 +1,8 @@
 import services
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request, session
 from flask_login import current_user, login_user, LoginManager, login_required, logout_user
 from forms import LoginForm, RegistrationForm, ExpenseForm, CategoryForm
+from flask_oauthlib.client import OAuth, OAuthException
 
 import services
 import secret 
@@ -18,6 +19,7 @@ logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 # ptvsd.enable_attach(redirect_output=True)
 
 app = Flask(__name__)
+oauth = OAuth(app)
 
 # Set the secret key to some random bytes. Keep this really secret!
 app.secret_key = secret.FLASK_SECRET
@@ -26,6 +28,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 login_manager.login_view = "login"
+
+facebook = oauth.remote_app('facebook',
+    base_url='https://graph.facebook.com/',
+    request_token_url=None,
+    access_token_url='/oauth/access_token',
+    authorize_url='https://www.facebook.com/dialog/oauth',
+    consumer_key=secret.FACEBOOK_APP_ID,
+    consumer_secret=secret.FACEBOOK_SECRET,
+    request_token_params={'scope': 'email'}
+)
 
 @app.teardown_request
 def remove_session(ex=None):
@@ -60,6 +72,44 @@ def login():
 		login_user(user, remember=form.remember_me.data)
 		return redirect(url_for('index'))
 	return render_template('login.html', title='Sign In', form=form)
+
+
+@app.route('/login-facebook')
+def login_facebook():
+	if current_user.is_authenticated:
+		return redirect(url_for('index'))
+
+	callback = url_for(
+        'facebook_authorized',
+        next=request.args.get('next') or request.referrer or None,
+        _external=True
+    )
+	return facebook.authorize(callback=callback)
+
+
+@app.route('/login/authorized')
+def facebook_authorized():
+	resp = facebook.authorized_response()
+	if resp is None:
+		return 'Access denied: reason=%s error=%s' % (
+			request.args['error_reason'],
+			request.args['error_description']
+		)
+	if isinstance(resp, OAuthException):
+		return 'Access denied: %s' % resp.message
+	session['oauth_token'] = (resp['access_token'], '')
+	me = facebook.get('/me')
+	user = services.add_new_user_facebook(id=me.data['id'], name=me.data['name'])
+	if user:
+		login_user(user)
+		return redirect(url_for('index'))
+	
+	return redirect(url_for('login'))
+
+
+@facebook.tokengetter
+def get_facebook_oauth_token():
+	return session.get('oauth_token')
 
 
 @app.route('/logout')
@@ -166,5 +216,6 @@ def category():
 
 
 if __name__ == '__main__':
-	app.debug = True
-	app.run(use_reloader=False, host='0.0.0.0', port=5000)
+	#app.debug = True
+	#app.run(use_reloader=False, host='0.0.0.0', port=5000)
+	app.run()
