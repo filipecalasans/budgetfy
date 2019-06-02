@@ -7,14 +7,14 @@ create custom categories and assign to each expense.
 We intend in the future to implement expenses report, and budget control tools 
 to help users to save money.
 
-The user can login user a registered account or a facebook account.
+The user can login using a registered account or a facebook account.
 
 ## How to Run
 
 You can run the project executing the following command in the terminal:
 
 ```terminal
-$> python webserver.py
+$> python webserver.wsgi
 ```
 
 You can then access the web app in the address; **http://localhost:5000/**
